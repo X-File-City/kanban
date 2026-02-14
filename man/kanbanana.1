@@ -1,0 +1,39 @@
+.TH KANBANANA 1 "February 2026" "kanbanana 0.1.0" "User Commands"
+.SH NAME
+kanbanana \- a kanban CLI foundation for coding agents
+.SH SYNOPSIS
+.B kanbanana
+.RI [ --json ]
+.RI [ --help ]
+.RI [ --version ]
+.SH DESCRIPTION
+.B kanbanana
+prints a minimal starter board for agent-focused kanban workflows.
+
+By default, output is plain text.
+Use
+.B --json
+for machine-readable output.
+.SH OPTIONS
+.TP
+.B --help, -h
+Show help text and exit.
+.TP
+.B --version, -v
+Show version and exit.
+.TP
+.B --json
+Print the starter board as JSON.
+.SH EXAMPLES
+.TP
+Show help:
+.B kanbanana --help
+.TP
+Print JSON output:
+.B kanbanana --json
+.SH EXIT STATUS
+.TP
+.B 0
+Successful execution.
+.SH SEE ALSO
+.BR npm (1)

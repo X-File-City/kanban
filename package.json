@@ -22,6 +22,7 @@
   "bin": {
     "kanbanana": "dist/cli.js"
   },
+  "man": "./man/kanbanana.1",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
@@ -32,6 +33,7 @@
   },
   "files": [
     "dist",
+    "man",
     "README.md",
     "LICENSE"
   ],

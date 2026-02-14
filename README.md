@@ -32,6 +32,12 @@ kanbanana --help
 kanbanana --json
 ```
 
+After global install, you can also view the manual page:
+
+```bash
+man kanbanana
+```
+
 ## Scripts
 
 - `npm run build`: compile TypeScript into `dist`
