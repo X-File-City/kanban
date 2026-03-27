@@ -1,0 +1,408 @@
+{
+  "id": "kanban-architecture",
+  "title": "Kanban — Architecture Tour",
+  "description": "A guided walkthrough of the Kanban codebase: an agent-native task management system that orchestrates parallel AI coding agents on isolated git worktrees.",
+  "version": "1.0.0",
+  "audience": "New Contributors & AI Assistants",
+  "prerequisites": [
+    "Familiarity with TypeScript and React",
+    "Basic understanding of tRPC and Zod"
+  ],
+  "metadata": {
+    "author": "Claude",
+    "createdAt": "2026-03-27",
+    "tags": ["onboarding", "architecture", "kanban"]
+  },
+  "steps": [
+    {
+      "id": "overview",
+      "title": "Welcome to Kanban",
+      "description": "Kanban is an agent-native task management platform. It runs multiple AI coding agents in parallel, each on an isolated git worktree, with a real-time web UI for monitoring and review.\n\nThe codebase splits into two main trees: a Node.js backend and a React frontend, connected via tRPC for type-safe RPC and WebSockets for live terminal streaming.",
+      "estimatedTime": 30,
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "backend",
+          "name": "Backend (src/)",
+          "color": "#3b82f6",
+          "items": [
+            { "path": "src", "type": "directory" }
+          ],
+          "opacity": 0.6,
+          "renderStrategy": "border"
+        },
+        {
+          "id": "frontend",
+          "name": "Frontend (web-ui/)",
+          "color": "#a371f7",
+          "items": [
+            { "path": "web-ui", "type": "directory" }
+          ],
+          "opacity": 0.6,
+          "renderStrategy": "border"
+        }
+      ],
+      "focusDirectory": "",
+      "interactiveActions": [
+        {
+          "type": "hover-directory",
+          "description": "Hover over src/ and web-ui/ to compare their sizes",
+          "target": "src"
+        }
+      ]
+    },
+    {
+      "id": "core-api",
+      "title": "Core — API Contracts & Business Logic",
+      "description": "This module is the heart of the backend. It defines every API contract with Zod schemas, validates incoming payloads, and implements task board mutations — creation, state transitions, and linking.\n\nThe agent catalog discovers available coding agents such as Cline, Claude, Codex, and Gemini.",
+      "estimatedTime": 45,
+      "focusDirectory": "src/core",
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "api-schema",
+          "name": "API Schema & Validation",
+          "color": "#f59e0b",
+          "items": [
+            { "path": "src/core/api-contract.ts", "type": "file" },
+            { "path": "src/core/api-validation.ts", "type": "file" }
+          ],
+          "opacity": 0.8,
+          "renderStrategy": "fill"
+        },
+        {
+          "id": "mutations",
+          "name": "Task Mutations",
+          "color": "#3fb950",
+          "items": [
+            { "path": "src/core/task-board-mutations.ts", "type": "file" },
+            { "path": "src/core/task-id.ts", "type": "file" }
+          ],
+          "opacity": 0.8,
+          "renderStrategy": "fill"
+        }
+      ],
+      "interactiveActions": [
+        {
+          "type": "click-file",
+          "description": "Click api-contract.ts to see the Zod schema definitions",
+          "target": "src/core/api-contract.ts"
+        }
+      ]
+    },
+    {
+      "id": "trpc-layer",
+      "title": "tRPC — Type-Safe API Layer",
+      "description": "This module exposes the backend to the frontend via type-safe RPC endpoints. The app router composes sub-routers for task execution, workspace operations, lifecycle hooks, and project selection.\n\nTypes flow end-to-end: Zod schemas in core, to tRPC routers, to auto-inferred client types in the frontend.",
+      "estimatedTime": 30,
+      "focusDirectory": "src/trpc",
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "router",
+          "name": "App Router",
+          "color": "#4c9aff",
+          "items": [
+            { "path": "src/trpc/app-router.ts", "type": "file" }
+          ],
+          "opacity": 0.8,
+          "renderStrategy": "fill"
+        },
+        {
+          "id": "sub-routers",
+          "name": "Sub-Routers",
+          "color": "#a371f7",
+          "items": [
+            { "path": "src/trpc/runtime-api.ts", "type": "file" },
+            { "path": "src/trpc/workspace-api.ts", "type": "file" },
+            { "path": "src/trpc/hooks-api.ts", "type": "file" },
+            { "path": "src/trpc/projects-api.ts", "type": "file" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "fill"
+        }
+      ],
+      "interactiveActions": [
+        {
+          "type": "click-file",
+          "description": "Click app-router.ts to see how routers compose",
+          "target": "src/trpc/app-router.ts"
+        }
+      ]
+    },
+    {
+      "id": "server-runtime",
+      "title": "Server — Runtime State & HTTP",
+      "description": "The runtime backbone. A central state store tracks all active tasks and broadcasts updates via SSE. The workspace registry manages workspace lifecycles, and the HTTP server ties it all together.\n\nEverything the frontend queries flows through here.",
+      "estimatedTime": 30,
+      "focusDirectory": "src/server",
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "state-hub",
+          "name": "State Hub",
+          "color": "#f85149",
+          "items": [
+            { "path": "src/server/runtime-state-hub.ts", "type": "file" }
+          ],
+          "opacity": 0.8,
+          "renderStrategy": "fill"
+        },
+        {
+          "id": "server-infra",
+          "name": "Server Infrastructure",
+          "color": "#3b82f6",
+          "items": [
+            { "path": "src/server/runtime-server.ts", "type": "file" },
+            { "path": "src/server/workspace-registry.ts", "type": "file" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "fill"
+        }
+      ],
+      "interactiveActions": [
+        {
+          "type": "click-file",
+          "description": "Click runtime-state-hub.ts — it's the central nervous system",
+          "target": "src/server/runtime-state-hub.ts"
+        }
+      ]
+    },
+    {
+      "id": "workspace-git",
+      "title": "Workspace — Git Worktrees & File Management",
+      "description": "This module makes parallel agent execution possible. Each task gets its own ephemeral git worktree so agents can work independently without conflicts.\n\nThe highlighted files cover worktree lifecycle, change syncing, diff detection, commit history, and progress snapshots for rollback.",
+      "estimatedTime": 40,
+      "focusDirectory": "src/workspace",
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "worktree-core",
+          "name": "Worktree Core",
+          "color": "#d29922",
+          "items": [
+            { "path": "src/workspace/task-worktree.ts", "type": "file" },
+            { "path": "src/workspace/git-sync.ts", "type": "file" }
+          ],
+          "opacity": 0.8,
+          "renderStrategy": "fill"
+        },
+        {
+          "id": "workspace-utils",
+          "name": "Workspace Utilities",
+          "color": "#3fb950",
+          "items": [
+            { "path": "src/workspace/get-workspace-changes.ts", "type": "file" },
+            { "path": "src/workspace/git-history.ts", "type": "file" },
+            { "path": "src/workspace/turn-checkpoints.ts", "type": "file" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "fill"
+        }
+      ],
+      "interactiveActions": [
+        {
+          "type": "click-file",
+          "description": "Click task-worktree.ts to see worktree lifecycle management",
+          "target": "src/workspace/task-worktree.ts"
+        }
+      ]
+    },
+    {
+      "id": "terminal-agents",
+      "title": "Terminal — Agent Session Orchestration",
+      "description": "This module bridges agent execution with the UI. It orchestrates session lifecycles and adapts different agent SDKs into a common interface.\n\nA registry discovers installed agents, a WebSocket server streams live output to the frontend, and a pseudo-terminal wrapper enables interactive shell sessions.",
+      "estimatedTime": 40,
+      "focusDirectory": "src/terminal",
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "session-mgmt",
+          "name": "Session Management",
+          "color": "#f85149",
+          "items": [
+            { "path": "src/terminal/session-manager.ts", "type": "file" },
+            { "path": "src/terminal/agent-session-adapters.ts", "type": "file" },
+            { "path": "src/terminal/session-state-machine.ts", "type": "file" }
+          ],
+          "opacity": 0.8,
+          "renderStrategy": "fill"
+        },
+        {
+          "id": "comms",
+          "name": "Communication",
+          "color": "#4c9aff",
+          "items": [
+            { "path": "src/terminal/ws-server.ts", "type": "file" },
+            { "path": "src/terminal/pty-session.ts", "type": "file" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "fill"
+        }
+      ],
+      "interactiveActions": [
+        {
+          "type": "click-file",
+          "description": "Click session-manager.ts — the agent session orchestrator",
+          "target": "src/terminal/session-manager.ts"
+        }
+      ]
+    },
+    {
+      "id": "cline-sdk",
+      "title": "Cline SDK — Native Agent Integration",
+      "description": "This module provides deep integration with the Cline agent framework. Rather than running Cline as a subprocess, Kanban embeds it natively.\n\nIt manages per-task Cline sessions, sets up the runtime environment, converts Cline events into Kanban's event model, configures LLM providers, and integrates the Model Context Protocol.",
+      "estimatedTime": 35,
+      "focusDirectory": "src/cline-sdk",
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "cline-core",
+          "name": "Session & Runtime",
+          "color": "#a371f7",
+          "items": [
+            { "path": "src/cline-sdk/cline-task-session-service.ts", "type": "file" },
+            { "path": "src/cline-sdk/cline-session-runtime.ts", "type": "file" }
+          ],
+          "opacity": 0.8,
+          "renderStrategy": "fill"
+        },
+        {
+          "id": "cline-adapters",
+          "name": "Event Adapters & Providers",
+          "color": "#d29922",
+          "items": [
+            { "path": "src/cline-sdk/cline-event-adapter.ts", "type": "file" },
+            { "path": "src/cline-sdk/cline-provider-service.ts", "type": "file" },
+            { "path": "src/cline-sdk/cline-mcp-runtime-service.ts", "type": "file" }
+          ],
+          "opacity": 0.7,
+          "renderStrategy": "fill"
+        }
+      ],
+      "interactiveActions": [
+        {
+          "type": "click-file",
+          "description": "Click cline-task-session-service.ts to see how Cline is embedded",
+          "target": "src/cline-sdk/cline-task-session-service.ts"
+        }
+      ]
+    },
+    {
+      "id": "frontend-components",
+      "title": "Frontend — React Components & Board UI",
+      "description": "This directory holds the React UI — roughly 70 files. The board core handles the main layout with drag-and-drop columns, individual task cards showing live agent status, and an expanded detail view with terminal, chat, and diff panels.\n\nSub-directories group detail panels for terminal, chat, and diff viewers, a commit history browser, and the design system primitives shared across the app.",
+      "estimatedTime": 45,
+      "focusDirectory": "web-ui/src/components",
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "board-components",
+          "name": "Board Core",
+          "color": "#3b82f6",
+          "items": [
+            { "path": "web-ui/src/components/kanban-board.tsx", "type": "file" },
+            { "path": "web-ui/src/components/board-card.tsx", "type": "file" },
+            { "path": "web-ui/src/components/board-column.tsx", "type": "file" },
+            { "path": "web-ui/src/components/card-detail-view.tsx", "type": "file" }
+          ],
+          "opacity": 0.8,
+          "renderStrategy": "fill"
+        },
+        {
+          "id": "panels",
+          "name": "Detail Panels",
+          "color": "#d4a72c",
+          "items": [
+            { "path": "web-ui/src/components/detail-panels", "type": "directory" }
+          ],
+          "opacity": 0.6,
+          "renderStrategy": "border"
+        },
+        {
+          "id": "ui-primitives",
+          "name": "UI Primitives",
+          "color": "#a371f7",
+          "items": [
+            { "path": "web-ui/src/components/ui", "type": "directory" }
+          ],
+          "opacity": 0.6,
+          "renderStrategy": "border"
+        }
+      ],
+      "interactiveActions": [
+        {
+          "type": "click-file",
+          "description": "Click kanban-board.tsx to see the board layout",
+          "target": "web-ui/src/components/kanban-board.tsx"
+        }
+      ]
+    },
+    {
+      "id": "frontend-hooks",
+      "title": "Frontend — Custom Hooks & Logic Layer",
+      "description": "Business logic is extracted from components into over 50 custom hooks. This separation keeps components focused on rendering while hooks handle board state and mutations, agent session control, git operations, keyboard shortcuts, and terminal I/O.\n\nThe runtime directory connects hooks to the backend via the tRPC client and SSE subscriptions.",
+      "estimatedTime": 35,
+      "focusDirectory": "web-ui/src",
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "hooks-dir",
+          "name": "Hooks",
+          "color": "#3fb950",
+          "items": [
+            { "path": "web-ui/src/hooks", "type": "directory" }
+          ],
+          "opacity": 0.6,
+          "renderStrategy": "border"
+        },
+        {
+          "id": "runtime-dir",
+          "name": "Runtime / tRPC Client",
+          "color": "#4c9aff",
+          "items": [
+            { "path": "web-ui/src/runtime", "type": "directory" }
+          ],
+          "opacity": 0.6,
+          "renderStrategy": "border"
+        }
+      ],
+      "interactiveActions": [
+        {
+          "type": "hover-directory",
+          "description": "Hover over hooks/ to see how much logic lives outside components",
+          "target": "web-ui/src/hooks"
+        }
+      ]
+    },
+    {
+      "id": "full-picture",
+      "title": "The Full Picture",
+      "description": "Here's how everything connects:\n\n1. React components delegate to custom hooks\n2. Hooks call tRPC endpoints, type-safe and auto-inferred\n3. tRPC routers invoke Zod-validated core logic\n4. Core logic delegates to workspace and terminal infrastructure\n5. Updates flow back in real time via WebSocket and SSE\n\nThe four highlighted files are the best starting points.",
+      "estimatedTime": 30,
+      "focusDirectory": "",
+      "colorMode": "fileTypes",
+      "highlightLayers": [
+        {
+          "id": "start-here",
+          "name": "Start Here",
+          "color": "#3fb950",
+          "items": [
+            { "path": "src/core/api-contract.ts", "type": "file" },
+            { "path": "src/server/runtime-state-hub.ts", "type": "file" },
+            { "path": "src/workspace/task-worktree.ts", "type": "file" },
+            { "path": "web-ui/src/components/kanban-board.tsx", "type": "file" }
+          ],
+          "opacity": 0.9,
+          "renderStrategy": "fill"
+        }
+      ],
+      "interactiveActions": [
+        {
+          "type": "explore",
+          "description": "Explore the codebase freely — you now know where everything lives"
+        }
+      ]
+    }
+  ]
+}
