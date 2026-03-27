@@ -378,23 +378,30 @@
     {
       "id": "full-picture",
       "title": "The Full Picture",
-      "description": "Here's how everything connects:\n\n1. React components delegate to custom hooks\n2. Hooks call tRPC endpoints, type-safe and auto-inferred\n3. tRPC routers invoke Zod-validated core logic\n4. Core logic delegates to workspace and terminal infrastructure\n5. Updates flow back in real time via WebSocket and SSE\n\nThe four highlighted files are the best starting points.",
+      "description": "You've seen every major layer — the React frontend delegates to tRPC, which invokes Zod-validated core logic, which fans out to workspace and terminal infrastructure. Real-time updates flow back via WebSocket and SSE.\n\nThis is the same full-map view you started with. Explore freely.",
       "estimatedTime": 30,
       "focusDirectory": "",
       "colorMode": "fileTypes",
       "highlightLayers": [
         {
-          "id": "start-here",
-          "name": "Start Here",
-          "color": "#3fb950",
+          "id": "backend",
+          "name": "Backend (src/)",
+          "color": "#3b82f6",
           "items": [
-            { "path": "src/core/api-contract.ts", "type": "file" },
-            { "path": "src/server/runtime-state-hub.ts", "type": "file" },
-            { "path": "src/workspace/task-worktree.ts", "type": "file" },
-            { "path": "web-ui/src/components/kanban-board.tsx", "type": "file" }
+            { "path": "src", "type": "directory" }
           ],
-          "opacity": 0.9,
-          "renderStrategy": "fill"
+          "opacity": 0.6,
+          "renderStrategy": "border"
+        },
+        {
+          "id": "frontend",
+          "name": "Frontend (web-ui/)",
+          "color": "#a371f7",
+          "items": [
+            { "path": "web-ui", "type": "directory" }
+          ],
+          "opacity": 0.6,
+          "renderStrategy": "border"
         }
       ],
       "interactiveActions": [
